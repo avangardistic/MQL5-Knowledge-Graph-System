@@ -1,0 +1,890 @@
+{
+  "metadata": {
+    "generated_at": "2026-08-11T20:52:12.554640",
+    "version": "1.0.0"
+  },
+  "statistics": {
+    "total_symbols": 24,
+    "total_edges": 129,
+    "total_files": 2,
+    "by_type": {
+      "function": 13,
+      "global_variable": 6,
+      "event_handler": 3,
+      "property": 2
+    }
+  },
+  "files": {
+    "sample_mql5/RiskManager.mqh": {
+      "path": "sample_mql5/RiskManager.mqh",
+      "name": "RiskManager.mqh",
+      "size": 4023,
+      "lines": 123
+    },
+    "sample_mql5/SampleEA.mq5": {
+      "path": "sample_mql5/SampleEA.mq5",
+      "name": "SampleEA.mq5",
+      "size": 6207,
+      "lines": 194
+    }
+  },
+  "symbols": {
+    "CalculateLotSize": {
+      "name": "CalculateLotSize",
+      "type": "function",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 16,
+      "return_type": "void",
+      "parameters": "double stopLossPoints",
+      "is_event_handler": false
+    },
+    "CanOpenPosition": {
+      "name": "CanOpenPosition",
+      "type": "function",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 40,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": false
+    },
+    "IsDailyLimitReached": {
+      "name": "IsDailyLimitReached",
+      "type": "function",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 54,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": false
+    },
+    "ResetDailyStats": {
+      "name": "ResetDailyStats",
+      "type": "function",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 94,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": false
+    },
+    "GetCurrentRiskPercent": {
+      "name": "GetCurrentRiskPercent",
+      "type": "function",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 103,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": false
+    },
+    "IsAccountInDanger": {
+      "name": "IsAccountInDanger",
+      "type": "function",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 118,
+      "return_type": "void",
+      "parameters": "double thresholdPercent",
+      "is_event_handler": false
+    },
+    "0": {
+      "name": "0",
+      "type": "global_variable",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 23,
+      "data_type": "return"
+    },
+    "lots": {
+      "name": "lots",
+      "type": "global_variable",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 34,
+      "data_type": "return"
+    },
+    "false": {
+      "name": "false",
+      "type": "global_variable",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 43,
+      "data_type": "return"
+    },
+    "true": {
+      "name": "true",
+      "type": "global_variable",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 48,
+      "data_type": "return"
+    },
+    "currentTime": {
+      "name": "currentTime",
+      "type": "global_variable",
+      "file": "sample_mql5/RiskManager.mqh",
+      "line_start": 56,
+      "data_type": "MqlDateTime"
+    },
+    "OnInit": {
+      "name": "OnInit",
+      "type": "event_handler",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 19,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": true
+    },
+    "OnDeinit": {
+      "name": "OnDeinit",
+      "type": "event_handler",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 36,
+      "return_type": "void",
+      "parameters": "const int reason",
+      "is_event_handler": true
+    },
+    "OnTick": {
+      "name": "OnTick",
+      "type": "event_handler",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 45,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": true
+    },
+    "OpenBuyOrder": {
+      "name": "OpenBuyOrder",
+      "type": "function",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 76,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": false
+    },
+    "CloseAllPositions": {
+      "name": "CloseAllPositions",
+      "type": "function",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 104,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": false
+    },
+    "ClosePosition": {
+      "name": "ClosePosition",
+      "type": "function",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 119,
+      "return_type": "void",
+      "parameters": "ulong ticket",
+      "is_event_handler": false
+    },
+    "CountPositions": {
+      "name": "CountPositions",
+      "type": "function",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 146,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": false
+    },
+    "PositionsTotal": {
+      "name": "PositionsTotal",
+      "type": "function",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 148,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": false
+    },
+    "TrailPositions": {
+      "name": "TrailPositions",
+      "type": "function",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 154,
+      "return_type": "void",
+      "parameters": "",
+      "is_event_handler": false
+    },
+    "ModifyPositionSL": {
+      "name": "ModifyPositionSL",
+      "type": "function",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 179,
+      "return_type": "void",
+      "parameters": "ulong ticket, double newSL",
+      "is_event_handler": false
+    },
+    "handleMA": {
+      "name": "handleMA",
+      "type": "global_variable",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 13,
+      "data_type": "int"
+    },
+    "property_copyright": {
+      "name": "property_copyright",
+      "type": "property",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 5,
+      "property_type": "copyright",
+      "value": "\"Sample\""
+    },
+    "property_version": {
+      "name": "property_version",
+      "type": "property",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 6,
+      "property_type": "version",
+      "value": "\"1.00\""
+    }
+  },
+  "edges": [
+    {
+      "source": "CalculateLotSize",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "CanOpenPosition",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "IsDailyLimitReached",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "ResetDailyStats",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "GetCurrentRiskPercent",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "IsAccountInDanger",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "0",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "lots",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "false",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "true",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "currentTime",
+      "target": "sample_mql5/RiskManager.mqh",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "CalculateLotSize",
+      "target": "CanOpenPosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "CalculateLotSize",
+      "target": "IsDailyLimitReached",
+      "type": "CALLS"
+    },
+    {
+      "source": "CalculateLotSize",
+      "target": "IsDailyLimitReached",
+      "type": "CALLS"
+    },
+    {
+      "source": "CalculateLotSize",
+      "target": "ResetDailyStats",
+      "type": "CALLS"
+    },
+    {
+      "source": "CalculateLotSize",
+      "target": "GetCurrentRiskPercent",
+      "type": "CALLS"
+    },
+    {
+      "source": "CalculateLotSize",
+      "target": "IsAccountInDanger",
+      "type": "CALLS"
+    },
+    {
+      "source": "CalculateLotSize",
+      "target": "GetCurrentRiskPercent",
+      "type": "CALLS"
+    },
+    {
+      "source": "CanOpenPosition",
+      "target": "IsDailyLimitReached",
+      "type": "CALLS"
+    },
+    {
+      "source": "CanOpenPosition",
+      "target": "IsDailyLimitReached",
+      "type": "CALLS"
+    },
+    {
+      "source": "CanOpenPosition",
+      "target": "ResetDailyStats",
+      "type": "CALLS"
+    },
+    {
+      "source": "CanOpenPosition",
+      "target": "GetCurrentRiskPercent",
+      "type": "CALLS"
+    },
+    {
+      "source": "CanOpenPosition",
+      "target": "IsAccountInDanger",
+      "type": "CALLS"
+    },
+    {
+      "source": "CanOpenPosition",
+      "target": "GetCurrentRiskPercent",
+      "type": "CALLS"
+    },
+    {
+      "source": "IsDailyLimitReached",
+      "target": "ResetDailyStats",
+      "type": "CALLS"
+    },
+    {
+      "source": "IsDailyLimitReached",
+      "target": "GetCurrentRiskPercent",
+      "type": "CALLS"
+    },
+    {
+      "source": "IsDailyLimitReached",
+      "target": "IsAccountInDanger",
+      "type": "CALLS"
+    },
+    {
+      "source": "IsDailyLimitReached",
+      "target": "GetCurrentRiskPercent",
+      "type": "CALLS"
+    },
+    {
+      "source": "ResetDailyStats",
+      "target": "GetCurrentRiskPercent",
+      "type": "CALLS"
+    },
+    {
+      "source": "ResetDailyStats",
+      "target": "IsAccountInDanger",
+      "type": "CALLS"
+    },
+    {
+      "source": "ResetDailyStats",
+      "target": "GetCurrentRiskPercent",
+      "type": "CALLS"
+    },
+    {
+      "source": "GetCurrentRiskPercent",
+      "target": "IsAccountInDanger",
+      "type": "CALLS"
+    },
+    {
+      "source": "IsAccountInDanger",
+      "target": "GetCurrentRiskPercent",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "OnTick",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "CloseAllPositions",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "ClosePosition",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "CountPositions",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "PositionsTotal",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "TrailPositions",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "ModifyPositionSL",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "handleMA",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "property_copyright",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "property_version",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "OnInit",
+      "target": "OnDeinit",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "OnTick",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "CloseAllPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "CountPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "OpenBuyOrder",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "OpenBuyOrder",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "CloseAllPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "ClosePosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "ClosePosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "CountPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnInit",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "OnTick",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "CloseAllPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "CountPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "OpenBuyOrder",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "OpenBuyOrder",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "CloseAllPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "ClosePosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "ClosePosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "CountPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnDeinit",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "CloseAllPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "CountPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "OpenBuyOrder",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "OpenBuyOrder",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "CloseAllPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "ClosePosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "ClosePosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "CountPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "OnTick",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "CloseAllPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "ClosePosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "ClosePosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "CountPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "OpenBuyOrder",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "CloseAllPositions",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "CloseAllPositions",
+      "target": "ClosePosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "CloseAllPositions",
+      "target": "ClosePosition",
+      "type": "CALLS"
+    },
+    {
+      "source": "CloseAllPositions",
+      "target": "CountPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "CloseAllPositions",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "CloseAllPositions",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "CloseAllPositions",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "CloseAllPositions",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "CloseAllPositions",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "ClosePosition",
+      "target": "CountPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "ClosePosition",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "ClosePosition",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "ClosePosition",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "ClosePosition",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "ClosePosition",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "CountPositions",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "CountPositions",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "CountPositions",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "CountPositions",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "CountPositions",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "PositionsTotal",
+      "target": "TrailPositions",
+      "type": "CALLS"
+    },
+    {
+      "source": "PositionsTotal",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "PositionsTotal",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "TrailPositions",
+      "target": "PositionsTotal",
+      "type": "CALLS"
+    },
+    {
+      "source": "TrailPositions",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    },
+    {
+      "source": "TrailPositions",
+      "target": "ModifyPositionSL",
+      "type": "CALLS"
+    }
+  ],
+  "includes": {
+    "sample_mql5/RiskManager.mqh": [],
+    "sample_mql5/SampleEA.mq5": []
+  },
+  "dll_imports": {
+    "sample_mql5/RiskManager.mqh": [],
+    "sample_mql5/SampleEA.mq5": []
+  }
+}
