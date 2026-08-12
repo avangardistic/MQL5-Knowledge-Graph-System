@@ -12,9 +12,9 @@ This system transforms an MQL5 project from a collection of files into a navigab
 
 ### Key Features
 
-- **Local Parsing**: Uses regex-based parsing (with tree-sitter support when available) - no API calls required
+- **Local Parsing**: Uses regex-based parsing - no API calls required
 - **Symbol Extraction**: Extracts functions, classes, input variables, enums, structs, event handlers
-- **Relationship Mapping**: Creates typed edges (CALLS, INCLUDES, DEPENDS_ON, DEFINED_IN, ACCESSES)
+- **Relationship Mapping**: Creates typed edges (CALLS, INCLUDES, DEPENDS_ON, DEFINED_IN)
 - **Graph Output**: Generates `graph.json` for Git collaboration and persistent AI context
 - **Human-Readable Reports**: Auto-generates `GRAPH_REPORT.md` summarizing project architecture
 - **MCP Server**: Model Context Protocol server for AI assistant integration
@@ -25,8 +25,8 @@ This system transforms an MQL5 project from a collection of files into a navigab
 # Clone or copy to your workspace
 cd /path/to/your/mql5/project
 
-# The system is self-contained - just ensure Python 3.10+ is installed
-pip install mcp  # For MCP server functionality
+# Install Python dependencies
+pip install mcp  # For MCP server functionality (optional)
 ```
 
 ## 🛠️ Usage
@@ -50,21 +50,19 @@ python -m mql5_kg.cli.graphify build ./MQL5/Experts -o ./output
 # Search for symbols (semantic search)
 python -m mql5_kg.cli.graphify query search "risk management"
 python -m mql5_kg.cli.graphify query search "basket"
-python -m mql5_kg.cli.graphify query search "grid levels"
 
 # Get symbol context (definition, callers, callees)
 python -m mql5_kg.cli.graphify query symbol OnTick
-python -m mql5_kg.cli.graphify query symbol ProcessBasketHardSL
+python -m mql5_kg.cli.graphify query symbol ClosePosition
 
 # Impact analysis (what breaks if I change this?)
-python -m mql5_kg.cli.graphify query impact ClosePositionWithRetry
+python -m mql5_kg.cli.graphify query impact OpenBuyOrder
 
 # Trace execution flow (find call path between symbols)
-python -m mql5_kg.cli.graphify query trace "OnTick CheckTriggers"
-python -m mql5_kg.cli.graphify query trace "OnInit AutoStart"
+python -m mql5_kg.cli.graphify query trace OnTick ModifyPositionSL
 
 # Get file summary (symbols without reading entire file)
-python -m mql5_kg.cli.graphify query file grid.mq5
+python -m mql5_kg.cli.graphify query file SampleEA.mq5
 
 # Resolve includes (detect circular references)
 python -m mql5_kg.cli.graphify query includes grid.mq5
@@ -96,16 +94,14 @@ The MCP server exposes these tools for AI assistants:
 ```
 User: "Help me debug why my EA isn't closing trades."
 
-AI Agent: [Calls get_symbol_context("OrderSend")]
-→ Returns details on OrderSend, including callers and file locations
+AI Agent: [Calls get_symbol_context("ClosePosition")]
+→ Returns details on ClosePosition, including callers and file locations
 
-AI Agent: [Calls impact_analysis("OrderSend")]  
-→ Returns list of functions depending on OrderSend
+AI Agent: [Calls impact_analysis("ClosePosition")]  
+→ Returns list of functions depending on ClosePosition
 
-AI Agent: "The issue might be in RiskManager.calculateStopLoss(), 
-which is called by CloseOrder(). The calculateStopLoss() function 
-seems to be returning -1, meaning it's failing to get a valid spread. 
-I'll analyze that specific function in RiskManager.mqh."
+AI Agent: "The issue might be in the OrderSend call within ClosePosition().
+I'll analyze that specific function in SampleEA.mq5."
 ```
 
 ## 📊 Output Files
@@ -150,6 +146,8 @@ mql5_kg/
 - `enum` / `enum_member` - Enumerations and their members
 - `input_variable` - EA input parameters
 - `global_variable` - Global scope variables
+- `property` - #property statements
+- `define` - #define macros
 
 ### Edge Types
 
@@ -157,7 +155,6 @@ mql5_kg/
 - `INCLUDES` - File A includes file B
 - `DEPENDS_ON` - File depends on DLL
 - `DEFINED_IN` - Symbol belongs to file
-- `ACCESSES` - Function reads/writes variable
 
 ## 🎯 MQL5-Specific Features
 
@@ -178,21 +175,21 @@ mql5_kg/
 
 ## ⚡ Performance
 
-- **Incremental Builds**: Only reprocesses changed files (Git-aware)
 - **Efficient Parsing**: Regex-based with optimized patterns
 - **Indexed Queries**: Pre-built indexes for fast lookups
+- **Lightweight**: No external dependencies beyond Python stdlib (MCP optional)
 
 ## 📝 Example Output
 
 ### Search Results
 ```json
 {
-  "query": "basket",
-  "results_count": 22,
+  "query": "position",
+  "results_count": 7,
   "results": [
-    {"name": "BasketInfo", "type": "struct", "file": "grid.mq5", "line": 2080},
-    {"name": "ExecuteBasketHardSL", "type": "function", "file": "grid.mq5", "line": 1901},
-    {"name": "CheckBasketHardSL", "type": "function", "file": "grid.mq5", "line": 1956}
+    {"name": "CanOpenPosition", "type": "function", "file": "RiskManager.mqh", "line_start": 40},
+    {"name": "CloseAllPositions", "type": "function", "file": "SampleEA.mq5", "line_start": 104},
+    {"name": "ClosePosition", "type": "function", "file": "SampleEA.mq5", "line_start": 119}
   ]
 }
 ```
@@ -203,12 +200,22 @@ mql5_kg/
   "definition": {
     "name": "OnTick",
     "type": "event_handler",
-    "file": "grid.mq5",
-    "line_start": 4686,
-    "return_type": "void"
+    "file": "SampleEA.mq5",
+    "line_start": 45,
+    "return_type": "void",
+    "parameters": ""
   },
   "callers": [],
-  "callees": ["CheckTriggers", "ProcessClosing", "GapGuard", ...]
+  "callees": ["CloseAllPositions", "OpenBuyOrder", "TrailPositions", "CountPositions"]
+}
+```
+
+### Execution Trace
+```json
+{
+  "found": true,
+  "path": ["OnTick", "TrailPositions", "ModifyPositionSL"],
+  "length": 3
 }
 ```
 
@@ -238,7 +245,7 @@ mql5_kg/
 
 - **Python**: 3.10 or higher
 - **MQL5 Files**: .mq5, .mqh, .mqproj
-- **Optional**: `mcp` package for MCP server
+- **Optional**: `mcp` package for MCP server (`pip install mcp`)
 
 ## 🤝 Contributing
 
@@ -249,6 +256,7 @@ Contributions welcome! Areas for improvement:
 3. **Cypher Query Support**: Full graph query language
 4. **Incremental Builds**: Git-based change detection
 5. **More MQL5 Concepts**: Better indicator/DLL mapping
+6. **Input Variable Parsing**: Improved extraction of EA inputs
 
 ## 📄 License
 
