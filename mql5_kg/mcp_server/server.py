@@ -133,19 +133,20 @@ class MCPServer:
 
         ListToolsRequest = mcp_types.ListToolsRequest
         ListToolsResult = mcp_types.ListToolsResult
-        CallToolRequest = mcp_types.CallToolRequest
+        CallToolRequestParams = mcp_types.CallToolRequestParams
         CallToolResult = mcp_types.CallToolResult
         TextContent = mcp_types.TextContent
 
         server = self.server
         tool_defs = self._tool_definitions()
 
-        async def handle_list_tools(req: ListToolsRequest) -> ListToolsResult:
+        async def handle_list_tools(_ctx: Any, req: ListToolsRequest) -> ListToolsResult:
             return ListToolsResult(tools=tool_defs)
 
-        async def handle_call_tool(req: CallToolRequest) -> CallToolResult:
-            name = req.params.name
-            arguments = req.params.arguments or {}
+        async def handle_call_tool(_ctx: Any, req: CallToolRequestParams) -> CallToolResult:
+            # req is the validated params model (name, arguments)
+            name = req.name
+            arguments = req.arguments or {}
             result_data = await self._handle_tool(name, arguments)
             return CallToolResult(
                 content=[TextContent(type="text", text=json.dumps(result_data, indent=2))]
@@ -158,7 +159,7 @@ class MCPServer:
         )
         server.add_request_handler(
             "tools/call",
-            CallToolRequest,
+            CallToolRequestParams,
             handle_call_tool,
         )
 
