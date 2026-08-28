@@ -4,15 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mql5-kg"
-version = "1.0.0"
-description = "MQL5 Knowledge Graph System - Build queryable knowledge graphs from MQL5 codebases"
+version = "2.0.0"
+description = "MQL5 Knowledge Graph System - evidence-backed static code graph indexer for MQL5 codebases"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
     {name = "MQL5 KG Contributors"}
 ]
-keywords = ["mql5", "knowledge-graph", "code-analysis", "mcp", "ai-assistant"]
+keywords = ["mql5", "knowledge-graph", "code-analysis", "mcp", "ai-assistant", "static-analysis", "metatrader"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -25,19 +25,27 @@ classifiers = [
     "Topic :: Software Development :: Code Generators",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
 ]
-dependencies = [
-    "mcp>=1.0.0",
-]
+
+[project.scripts]
+mql5kg = "mql5_kg.adapters.cli:main"
+mql5kg-mcp = "mql5_kg.adapters.mcp.server:main"
+# Legacy compatibility entry points (thin adapters over the new core)
+graphify = "mql5_kg.compat.graphify:main"
+mql5-kg = "mql5_kg.compat.graphify:main"
 
 [project.optional-dependencies]
+mcp = ["mcp>=1.28.1,<2"]
+reference = ["pypdf>=6.10,<7", "pypdfium2>=5.7.1,<6"]
+test = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "mcp>=1.28.1,<2",
+]
 dev = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
+    "mcp>=1.28.1,<2",
 ]
-
-[project.scripts]
-graphify = "mql5_kg.cli.graphify:main"
-mql5-kg = "mql5_kg.cli.graphify:main"
 
 [project.urls]
 Homepage = "https://github.com/avangardistic/MQL5-Knowledge-Graph-System"

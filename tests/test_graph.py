@@ -1,98 +1,64 @@
-"""
-Tests for graph storage and graph integrity after a full build.
-"""
+"""Canonical graph tests: serialization round-trip, atomic save, determinism."""
 
 import json
-import tempfile
-import shutil
-from pathlib import Path
 
-import pytest
+from mql5_kg.graph import CodeGraph, GraphEdge, GraphNode, SCHEMA_VERSION, SourceLocation, stable_id
+from mql5_kg.indexer import analyze_repository
 
-from mql5_kg.parser import MQL5Parser
-from mql5_kg.storage import GraphStorage
-
-FIXTURES = Path(__file__).parent / "fixtures"
+from conftest import FIXTURES
 
 
-def build_graph_from(fixture_name: str, tmp_dir: str) -> dict:
-    p = MQL5Parser()
-    p.parse_file(str(FIXTURES / fixture_name))
-    graph = p.get_graph()
-    storage = GraphStorage(tmp_dir)
-    storage.save_graph(graph)
-    return graph
+def test_stable_id_is_deterministic():
+    assert stable_id("symbol", "function", "EA.mq5", "OnTick", "OnTick()") == \
+        stable_id("symbol", "function", "EA.mq5", "OnTick", "OnTick()")
 
 
-class TestGraphStorage:
-    def test_save_and_reload(self, tmp_path):
-        p = MQL5Parser()
-        p.parse_file(str(FIXTURES / "audit_test.mq5"))
-        graph = p.get_graph()
-        storage = GraphStorage(str(tmp_path))
-        path = storage.save_graph(graph)
-        reloaded = storage.load_graph()
-
-        assert 'symbols' in reloaded
-        assert 'edges' in reloaded
-        assert 'files' in reloaded
-        assert 'metadata' in reloaded
-
-    def test_statistics_in_saved_graph(self, tmp_path):
-        p = MQL5Parser()
-        p.parse_file(str(FIXTURES / "audit_test.mq5"))
-        graph = p.get_graph()
-        storage = GraphStorage(str(tmp_path))
-        storage.save_graph(graph)
-        reloaded = storage.load_graph()
-        stats = reloaded.get('statistics', {})
-        assert stats.get('total_symbols', 0) > 0
-        assert stats.get('total_edges', 0) > 0
-
-    def test_report_generation(self, tmp_path):
-        p = MQL5Parser()
-        p.parse_file(str(FIXTURES / "audit_test.mq5"))
-        graph = p.get_graph()
-        storage = GraphStorage(str(tmp_path))
-        report_path = storage.generate_report(graph)
-        assert Path(report_path).exists()
-        content = Path(report_path).read_text(encoding='utf-8')
-        assert 'MQL5 Knowledge Graph Report' in content
+def test_round_trip(tmp_path):
+    graph = analyze_repository(str(FIXTURES))
+    path = tmp_path / "graph.json"
+    graph.save(path)
+    loaded = CodeGraph.load(path)
+    assert loaded.to_json() == graph.to_json()
 
 
-class TestGraphIntegrityAfterBuild:
-    """Validate graph.json produced from the test corpus."""
+def test_save_is_atomic(tmp_path):
+    graph = analyze_repository(str(FIXTURES))
+    path = tmp_path / "graph.json"
+    graph.save(path)
+    assert not path.with_suffix(path.suffix + ".tmp").exists()
+    assert path.exists()
 
-    def test_no_numeric_symbol_keys(self, tmp_path):
-        graph = build_graph_from("audit_test.mq5", str(tmp_path))
-        storage = GraphStorage(str(tmp_path))
-        saved = storage.load_graph()
-        for name in saved.get('symbols', {}):
-            try:
-                float(name)
-                pytest.fail(f"Numeric symbol key found: {name!r}")
-            except ValueError:
-                pass
 
-    def test_no_keyword_calls_targets(self, tmp_path):
-        KEYWORDS = {'if', 'for', 'while', 'switch', 'else', 'case', 'default'}
-        graph = build_graph_from("audit_test.mq5", str(tmp_path))
-        storage = GraphStorage(str(tmp_path))
-        saved = storage.load_graph()
-        for edge in saved.get('edges', []):
-            if edge.get('type') == 'CALLS':
-                assert edge.get('target') not in KEYWORDS, \
-                    f"Keyword {edge['target']!r} in CALLS edges"
+def test_schema_version_rejected():
+    payload = json.loads(analyze_repository(str(FIXTURES)).to_json())
+    payload["schema_version"] = "999.0.0"
+    import pytest
 
-    def test_edge_nodes_exist_as_symbols_or_files(self, tmp_path):
-        graph = build_graph_from("audit_test.mq5", str(tmp_path))
-        storage = GraphStorage(str(tmp_path))
-        saved = storage.load_graph()
-        sym_keys = set(saved.get('symbols', {}).keys())
-        file_keys = set(saved.get('files', {}).keys())
-        all_nodes = sym_keys | file_keys
+    with pytest.raises(ValueError, match="Unsupported graph schema"):
+        CodeGraph.from_dict(payload)
 
-        for edge in saved.get('edges', []):
-            if edge.get('type') == 'CALLS':
-                assert edge['source'] in all_nodes
-                assert edge['target'] in all_nodes
+
+def test_serialization_is_deterministic():
+    graph = analyze_repository(str(FIXTURES))
+    assert graph.to_json() == graph.to_json()
+
+
+def test_edges_carry_evidence():
+    graph = analyze_repository(str(FIXTURES))
+    for edge in graph.edges.values():
+        assert edge.origin in {"extracted", "resolved", "runtime", "inferred"}
+        assert 0.0 <= edge.confidence <= 1.0
+
+
+def test_metadata_contains_fingerprint():
+    graph = analyze_repository(str(FIXTURES))
+    assert graph.metadata["source_fingerprint"]
+    assert graph.metadata["file_count"] > 0
+
+
+def test_source_fingerprint_changes_with_source(tmp_path):
+    (tmp_path / "a.mq5").write_text("void Foo() { }\n", encoding="utf-8")
+    first = analyze_repository(str(tmp_path)).metadata["source_fingerprint"]
+    (tmp_path / "a.mq5").write_text("void Foo() { }\nvoid Bar() { }\n", encoding="utf-8")
+    second = analyze_repository(str(tmp_path)).metadata["source_fingerprint"]
+    assert first != second

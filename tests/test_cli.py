@@ -1,108 +1,127 @@
-"""
-Tests for the CLI — build and query commands.
-"""
+"""Tests for the ``mql5kg`` CLI adapter."""
 
 import json
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 
 FIXTURES = Path(__file__).parent / "fixtures"
-REPO_ROOT = Path(__file__).parent.parent
 PYTHON = sys.executable
 
 
 def run_cli(*args, cwd=None) -> subprocess.CompletedProcess:
-    """Run the graphify CLI via python -m."""
-    cmd = [PYTHON, "-m", "mql5_kg.cli.graphify"] + list(args)
     return subprocess.run(
-        cmd, capture_output=True, text=True,
-        cwd=str(cwd or REPO_ROOT)
+        [PYTHON, "-m", "mql5_kg.adapters.cli"] + list(args),
+        capture_output=True,
+        text=True,
+        cwd=str(cwd or Path(__file__).parent.parent),
     )
 
 
-class TestBuildCommand:
-    def test_build_creates_graph_json(self, tmp_path):
-        result = run_cli("build", str(FIXTURES), "-o", str(tmp_path))
+@pytest.fixture(scope="module")
+def graph_file(tmp_path_factory):
+    tmp = tmp_path_factory.mktemp("kg_cli")
+    result = run_cli("index", str(FIXTURES), "-o", str(tmp / "graph.json"))
+    assert result.returncode == 0, result.stderr
+    return str(tmp / "graph.json")
+
+
+class TestIndexCommand:
+    def test_index_creates_canonical_graph(self, tmp_path):
+        result = run_cli("index", str(FIXTURES), "-o", str(tmp_path / "graph.json"))
         assert result.returncode == 0, result.stderr
-        assert (tmp_path / "graph.json").exists()
+        graph = json.loads((tmp_path / "graph.json").read_text(encoding="utf-8"))
+        assert graph["schema_version"] == "1.0.0"
+        assert graph["metadata"]["source_fingerprint"]
 
-    def test_build_output_has_statistics(self, tmp_path):
-        run_cli("build", str(FIXTURES), "-o", str(tmp_path))
-        graph = json.loads((tmp_path / "graph.json").read_text(encoding='utf-8'))
-        stats = graph.get('statistics', {})
-        assert stats.get('total_symbols', 0) > 0
-
-    def test_build_single_file(self, tmp_path):
-        result = run_cli("build", str(FIXTURES / "audit_test.mq5"), "-o", str(tmp_path))
-        assert result.returncode == 0, result.stderr
-        assert (tmp_path / "graph.json").exists()
-
-    def test_build_report_flag(self, tmp_path):
-        result = run_cli("build", str(FIXTURES), "-o", str(tmp_path), "--report")
+    def test_index_json_output(self, tmp_path):
+        result = run_cli("index", str(FIXTURES), "-o", str(tmp_path / "graph.json"), "--json")
         assert result.returncode == 0
-        assert (tmp_path / "GRAPH_REPORT.md").exists()
+        payload = json.loads(result.stdout)
+        assert payload["nodes"] > 0
 
-    def test_no_runtime_warning(self, tmp_path):
-        result = run_cli("build", str(FIXTURES), "-o", str(tmp_path))
-        assert "RuntimeWarning" not in result.stderr, \
-            f"RuntimeWarning present: {result.stderr}"
+    def test_index_missing_root(self):
+        result = run_cli("index", "/does/not/exist")
+        assert result.returncode == 1
 
 
 class TestQueryCommands:
-    """Query commands require a graph.json built first."""
+    def test_status(self, graph_file):
+        result = run_cli("status", graph_file)
+        assert result.returncode == 0
+        assert "Schema 1.0.0" in result.stdout
 
-    @pytest.fixture(autouse=True)
-    def build_graph(self, tmp_path):
-        run_cli("build", str(FIXTURES), "-o", str(tmp_path))
-        self.graph_path = str(tmp_path / "graph.json")
-        self.tmp_path = tmp_path
+    def test_search(self, graph_file):
+        result = run_cli("search", graph_file, "OnTick", "--json")
+        assert result.returncode == 0
+        payload = json.loads(result.stdout)
+        assert payload["operation"] == "query"
 
-    def run_query(self, *args):
-        return run_cli("query", *args, "--graph", self.graph_path)
+    def test_symbol(self, graph_file):
+        result = run_cli("symbol", graph_file, "CalculateLotSize", "--json")
+        assert result.returncode == 0
+        payload = json.loads(result.stdout)
+        assert payload["resolution"][0]["status"] == "matched"
 
-    def test_query_search(self):
-        r = self.run_query("search", "OnTick")
-        assert r.returncode == 0, r.stderr
-        data = json.loads(r.stdout)
-        assert 'results' in data
+    def test_callers(self, graph_file):
+        result = run_cli("callers", graph_file, "CloseAllPositions")
+        assert result.returncode == 0
+        assert "OnTick" in result.stdout
 
-    def test_query_symbol(self):
-        r = self.run_query("symbol", "OnTick")
-        assert r.returncode == 0, r.stderr
-        data = json.loads(r.stdout)
-        assert 'definition' in data
+    def test_callees(self, graph_file):
+        result = run_cli("callees", graph_file, "OnTick", "--json")
+        assert result.returncode == 0
+        payload = json.loads(result.stdout)
+        # At max_depth the search space may be flagged as not fully explored;
+        # the operation still returns all depth-1 callees.
+        assert payload["completion"]["reason"] in {"complete", "max_depth"}
+        assert len(payload["relationships"]) > 0
 
-    def test_query_impact(self):
-        r = self.run_query("impact", "OnTick")
-        assert r.returncode == 0, r.stderr
-        data = json.loads(r.stdout)
-        assert 'symbol' in data or 'error' in data
+    def test_impact(self, graph_file):
+        result = run_cli("impact", graph_file, "CloseAllPositions", "--json")
+        assert result.returncode == 0
+        payload = json.loads(result.stdout)
+        assert payload["operation"] == "impact"
 
-    def test_query_file(self):
-        r = self.run_query("file", "audit_test.mq5")
-        assert r.returncode == 0, r.stderr
-        data = json.loads(r.stdout)
-        assert 'symbols' in data or 'error' in data
+    def test_trace(self, graph_file):
+        result = run_cli("trace", graph_file, "OnTick", "CloseAllPositions")
+        assert result.returncode == 0
+        assert "path 1" in result.stdout
 
-    def test_query_includes(self):
-        r = self.run_query("includes", "realistic_ea.mq5")
-        assert r.returncode == 0, r.stderr
-        data = json.loads(r.stdout)
-        assert 'resolved_includes' in data or 'error' in data
+    def test_context_budget(self, graph_file):
+        result = run_cli("context", graph_file, "OnTick", "--budget", "40", "--json")
+        assert result.returncode == 0
+        payload = json.loads(result.stdout)
+        package = payload["context_package"]
+        assert package["budget_used"] <= package["budget_limit"]
 
-    def test_query_trace(self):
-        r = self.run_query("trace", "OnTick", "CloseAll")
-        assert r.returncode == 0, r.stderr
-        data = json.loads(r.stdout)
-        assert 'found' in data
+    def test_diagnostics(self, graph_file):
+        result = run_cli("diagnostics", graph_file, "--json")
+        assert result.returncode == 0
+        payload = json.loads(result.stdout)
+        assert "diagnostics" in payload
 
-    def test_no_attribute_error(self):
-        r = self.run_query("search", "OnTick")
-        assert "AttributeError" not in r.stderr, f"AttributeError: {r.stderr}"
+    def test_no_match_is_graceful(self, graph_file):
+        result = run_cli("symbol", graph_file, "DoesNotExistXYZ")
+        assert result.returncode == 0
+        assert "no match" in result.stdout
 
-    def test_no_runtime_warning_on_query(self):
-        r = self.run_query("search", "OnTick")
-        assert "RuntimeWarning" not in r.stderr, f"RuntimeWarning: {r.stderr}"
+
+class TestExportCommand:
+    def test_export_markdown(self, graph_file, tmp_path):
+        result = run_cli("export", graph_file, "--format", "markdown", "-o", str(tmp_path / "report.md"))
+        assert result.returncode == 0
+        assert (tmp_path / "report.md").exists()
+
+    def test_export_graphml(self, graph_file, tmp_path):
+        result = run_cli("export", graph_file, "--format", "graphml", "-o", str(tmp_path / "graph.graphml"))
+        assert result.returncode == 0
+        content = (tmp_path / "graph.graphml").read_text(encoding="utf-8")
+        assert "graphml" in content
+
+    def test_export_json(self, graph_file, tmp_path):
+        result = run_cli("export", graph_file, "--format", "json", "-o", str(tmp_path / "graph.json"))
+        assert result.returncode == 0
+        json.loads((tmp_path / "graph.json").read_text(encoding="utf-8"))
