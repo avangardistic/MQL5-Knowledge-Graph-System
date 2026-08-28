@@ -11,10 +11,12 @@ python -m pytest -q
 python -m pytest -v            # CI uses -v
 ```
 
-## What the suite covers (197 tests)
+## What the suite covers (208 tests)
 
 - **Unit**: lexer, parser, symbols, resolver, graph, snapshots, index,
   intelligence, context, runtime, diagnostics, budget (`test_*.py`).
+- **Incremental**: reuse / changed re-parse / determinism vs full / add-remove /
+  corrupt-cache fallback / include ripple (`test_incremental.py`).
 - **Adversarial**: `test_adversarial.py` + fixtures throw malformed/partially
   edited/ambiguous/include-heavy source at the parser; it must fail
   gracefully (diagnostics, no crashes).

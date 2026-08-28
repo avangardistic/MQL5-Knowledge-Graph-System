@@ -8,6 +8,12 @@ about MQL5 code without consuming the entire source tree.
 
 from .analysis_budget import AnalysisBudget, AnalysisBudgetExceeded
 from .graph import CodeGraph, GraphEdge, GraphNode, SCHEMA_VERSION, SourceLocation
+from .incremental import (
+    FileCache,
+    IncrementalResult,
+    incremental_analysis,
+    persist_incremental,
+)
 from .indexer import analyze_repository, discover_sources
 from .parser import parse_source
 from .snapshots import GraphSnapshot, GraphValidationError, graph_fingerprint
@@ -17,15 +23,19 @@ __all__ = [
     "AnalysisBudget",
     "AnalysisBudgetExceeded",
     "CodeGraph",
+    "FileCache",
     "GraphEdge",
     "GraphNode",
     "GraphSnapshot",
     "GraphValidationError",
+    "IncrementalResult",
     "SCHEMA_VERSION",
     "SourceLocation",
     "__version__",
     "analyze_repository",
     "discover_sources",
     "graph_fingerprint",
+    "incremental_analysis",
     "parse_source",
+    "persist_incremental",
 ]

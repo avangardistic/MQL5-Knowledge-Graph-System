@@ -11,12 +11,22 @@ deterministic, and scoped to a single request or operation.
 | Project root | positional `root` | — | Directory scanned for `.mq5` / `.mqh` files |
 | Output path | `--output` / `-o` | `graph.json` | Where the canonical graph is saved (atomic) |
 | Include roots | `--include-root` | none | Extra directories to resolve `#include` against (repeatable) |
-| Excluded dirs | `--exclude` | default set | Directory *names* to skip |
-| Analysis budget | `--max-work` | `1000000` | Deterministic logical work units |
+| Excluded dirs | `--exclude` | default set | Directory *names* to skip || Analysis budget | `--max-work` | `1000000` | Deterministic logical work units |
+| Incremental indexing | `--incremental` | off | Reuse serialized parse results for unchanged files across runs |
+| Cache path | `--cache PATH` | `<output>.cache.json` | Where the incremental parse cache is persisted (only used with `--incremental`) |
 
-The default excluded names are `{".git", ".gitnexus", "graphify-out",
-"build", "dist", "__pycache__"}`. Additional names via `--exclude` are added
+The default excluded names are `{".git", ".gitnexus", "graphify-out", "build", "dist", "__pycache__"}`. Additional names via `--exclude` are added
 to this set. **`--exclude` accepts directory names only, not paths.**
+
+### Incremental indexing
+
+`mql5kg index ROOT --incremental -o graph.json` writes a content-hash cache (default
+`graph.cache.json`). On subsequent runs, unchanged files are not re-lexed/re-parsed; only
+changed or added files are, and repository-wide resolution always runs over the combined
+ParseResults so results equal a full build (`mode: incremental`). An unchanged repository is
+reused wholesale (`mode: reuse`); a missing, corrupt, or config-mismatched cache falls back to a
+full build (`mode: full`). The cache is bound to the analysis configuration (root, include
+roots, excluded names) and is invalidated when that configuration changes.
 
 ### Analysis budget
 

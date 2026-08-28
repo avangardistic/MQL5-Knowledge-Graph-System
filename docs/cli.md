@@ -12,16 +12,24 @@ builds a kernel, and projects the contract result.
 
 ## Commands
 
-### `mql5kg index ROOT [-o OUT]`
+### `mql5kg index ROOT [-o OUT] [--incremental] [--cache PATH]`
 
 Index an MQL5 source tree into a canonical graph.
 
 ```
 mql5kg index ./MQL5/Experts -o graph.json
 mql5kg index . --include-root ../Includes --exclude Legacy --max-work 5000000
+mql5kg index ./MQL5/Experts --incremental -o graph.json
 ```
 
 The graph is validated (`GraphSnapshot`) and saved atomically.
+
+With `--incremental`, a persisted content-hash cache (default `<output>.cache.json`, override
+with `--cache PATH`) stores serialized parse results per file. On the next run, only changed or
+added files are re-lexed/re-parsed; unchanged files are loaded from the cache. Repository-wide
+resolution always runs, so results are identical to a full build (`--json` reports `mode`:
+`full` | `incremental` | `reuse`, plus `reused_files`, `changed_files`, `removed_files`). See
+`docs/architecture.md` (incremental index) and `docs/configuration.md`.
 
 ### `mql5kg status GRAPH`
 

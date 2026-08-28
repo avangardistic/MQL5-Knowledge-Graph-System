@@ -16,6 +16,7 @@ from typing import Any, Sequence
 from ..analysis_budget import AnalysisBudget, AnalysisBudgetExceeded
 from ..exporters import export_graphml, export_markdown
 from ..graph import CodeGraph
+from ..incremental import FileCache, incremental_analysis, persist_incremental
 from ..indexer import analyze_repository
 from ..intelligence import (
     IntelligenceError,
@@ -81,6 +82,10 @@ def _parser() -> argparse.ArgumentParser:
     index.add_argument("--include-root", action="append", default=[])
     index.add_argument("--exclude", action="append", default=[])
     index.add_argument("--max-work", type=int)
+    index.add_argument("--incremental", action="store_true",
+                       help="Reuse parsed unchanged files across runs (persists a content-hash cache)")
+    index.add_argument("--cache", default=None,
+                       help="Path for the incremental ParseResult cache (default: <output>.cache.json)")
     index.add_argument("--json", action="store_true")
 
     status = subcommands.add_parser("status", help="Show saved graph metadata")
@@ -224,36 +229,69 @@ def run(arguments: Sequence[str] | None = None) -> int:
             )
             return 1
         try:
-            graph = analyze_repository(
-                args.root,
-                args.include_root,
-                args.exclude,
-                max_work=args.max_work,
-            )
-            snapshot = GraphSnapshot.publish(graph, revision=1)
+            if args.incremental:
+                output_path = Path(args.output).resolve()
+                cache_abs = Path(args.cache).resolve() if args.cache else output_path.with_name(
+                    output_path.stem + ".cache.json"
+                )
+                result, cache = incremental_analysis(
+                    args.root,
+                    args.include_root,
+                    args.exclude,
+                    max_work=args.max_work,
+                    cache_path=cache_abs,
+                )
+                graph = result.graph
+                snapshot = GraphSnapshot.publish(graph, revision=1)
+                persist_incremental(result, cache, graph_path=output_path, cache_path=cache_abs)
+                output = str(output_path)
+                summary = {
+                    "output": output,
+                    "mode": result.mode,
+                    "reused_files": result.reused_files,
+                    "changed_files": list(result.changed_files),
+                    "removed_files": list(result.removed_files),
+                    "files": graph.metadata["file_count"],
+                    "nodes": len(graph.nodes),
+                    "edges": len(graph.edges),
+                    "diagnostics": len(graph.diagnostics),
+                    "source_fingerprint": graph.metadata["source_fingerprint"],
+                    "graph_fingerprint": snapshot.fingerprint,
+                }
+            else:
+                graph = analyze_repository(
+                    args.root,
+                    args.include_root,
+                    args.exclude,
+                    max_work=args.max_work,
+                )
+                snapshot = GraphSnapshot.publish(graph, revision=1)
+                output = Path(args.output)
+                output.parent.mkdir(parents=True, exist_ok=True)
+                graph.save(output)
+                summary = {
+                    "output": str(output.resolve()),
+                    "files": graph.metadata["file_count"],
+                    "nodes": len(graph.nodes),
+                    "edges": len(graph.edges),
+                    "diagnostics": len(graph.diagnostics),
+                    "source_fingerprint": graph.metadata["source_fingerprint"],
+                    "graph_fingerprint": snapshot.fingerprint,
+                }
         except AnalysisBudgetExceeded as error:
             _emit_error(error.to_dict(), args.json)
             return 1
         except GraphValidationError as error:
             _emit_error(error.to_dict(), args.json)
             return 1
-        output = Path(args.output)
-        output.parent.mkdir(parents=True, exist_ok=True)
-        graph.save(output)
-        summary = {
-            "output": str(output.resolve()),
-            "files": graph.metadata["file_count"],
-            "nodes": len(graph.nodes),
-            "edges": len(graph.edges),
-            "diagnostics": len(graph.diagnostics),
-            "source_fingerprint": graph.metadata["source_fingerprint"],
-            "graph_fingerprint": snapshot.fingerprint,
-        }
+        human = f"Indexed {summary['files']} files: {summary['nodes']} nodes, " \
+            f"{summary['edges']} edges, {summary['diagnostics']} diagnostics -> {summary['output']}"
+        if summary.get("mode") is not None:
+            human += f" (mode: {summary['mode']}, reused: {summary['reused_files']})"
         _emit(
             summary,
             args.json,
-            f"Indexed {summary['files']} files: {summary['nodes']} nodes, "
-            f"{summary['edges']} edges, {summary['diagnostics']} diagnostics -> {args.output}",
+            human,
         )
         return 0
 

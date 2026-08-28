@@ -16,7 +16,7 @@ The primary goal is achieved: AI coding agents can now answer
 context packages instead of whole source trees, reducing token consumption
 without sacrificing correctness or evidence.
 
-**197 tests pass.** The CLI, HTTP, and MCP entry points work. CI is configured,
+**208 tests pass.** The CLI, HTTP, and MCP entry points work. CI is configured,
 documentation is complete for both human and AI audiences, and the repository
 is self-contained with no secrets.
 
@@ -80,7 +80,11 @@ Tolerance (`docs/parser.md`, `tests/fixtures/adversarial/`):
 - Structural parser, not a full C++ grammar — deep expression-typing is
   best-effort; specific ambiguous overloads are preserved as ambiguous rather
   than guessed.
-- No full incremental/git-diff indexing yet (re-index is whole-graph, safe).
+
+**Incremental indexing:** `mql5kg index --incremental` reuses serialized parse
+results for unchanged files (persisted content-hash cache) while always running
+full repository-wide resolution, so results are identical to a full rebuild
+(`docs/incremental.md` / `docs/architecture.md`).
 
 ## Knowledge Graph
 
@@ -128,11 +132,12 @@ envelopes.
 
 ## Testing
 
-**197 tests pass** (`python -m pytest -q`), covering:
+**208 tests pass** (`python -m pytest -q`), covering:
 
 | Category | Files |
 |----------|-------|
 | Unit (lexer, parser, symbols, resolver, graph, snapshots, index, intelligence, context, runtime, diagnostics, budget) | `test_lexer/parser/symbols/...` |
+| Incremental (reuse / re-parse / determinism / fallback) | `test_incremental.py` |
 | Adversarial parser robustness | `test_adversarial.py` + `fixtures/adversarial/` |
 | Security (path traversal, budgets, fingerprint, Graphify env) | `test_security.py` |
 | Invariant / round-trip / golden | `test_snapshots.py`, `test_regression.py` |
@@ -181,7 +186,9 @@ files parse near-linearly (regression-tested).
   few hundred KB of dense source before `analysis_budget_exceeded`. This is by
   design (deterministic safe fail); larger projects must raise it. Documented
   in `docs/configuration.md` and `docs/troubleshooting.md`.
-- **No full incremental indexing** yet; re-indexing is whole-graph.
+- **Incremental indexing is parse-incremental, not resolution-incremental**:
+  unchanged files skip re-parsing, but repository-wide resolution still runs
+  every time to guarantee correctness (see `docs/incremental.md`).
 - **Reference/Graphify**: implemented and unit/security-tested, but
   end-to-end validation requires the operator's PDFs and the external
   `graphify` binary + a supported backend.

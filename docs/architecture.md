@@ -67,6 +67,18 @@ atomically. Snapshots carry a deterministic source fingerprint so clients can de
 An immutable `GraphIndex` with sorted node/edge maps, name/qualified-name lookups, and
 incoming/outgoing adjacency tables. It never mutates the canonical graph.
 
+### 8b. Incremental indexing (`mql5_kg/incremental.py`)
+An optional persisted `FileCache` stores each file's content hash → serialized `ParseResult`
+(versioned, deterministic). `incremental_analysis()` diffs current source content against the
+cache, re-lexes/parses **only** changed/added files, reuses unchanged files' cached parse
+results, and then runs the **full** deterministic `build_graph` resolution over the combined
+units — so overload, include, and scope changes from one modified file resolve correctly for
+every caller. A repository with no changes is reused wholesale (`mode: reuse`); a missing,
+corrupt, or config-mismatched cache falls back to a full rebuild (`mode: full`). The cache and
+graph are persisted atomically together (`persist_incremental`), preserving Invariant 5
+(determinism) and Invariant 12 (no partial publication). Exposed via `mql5kg index --incremental`; the MCP server intentionally remains in-memory (its read-only, no-disk-write security
+invariant), reusing a loaded snapshot by fingerprint instead.
+
 ### 9. Intelligence kernel (`mql5_kg/intelligence/`)
 The single owner of query semantics:
 `query`, `context`, `impact`, `path`, `diagnostics`, `context_package` — all over one immutable
@@ -99,6 +111,9 @@ lower-confidence inference); omissions are reported.
 - Lexing and parsing are linear in tokens; function-body membership is O(1) per token via a
   precomputed token→function map (see `ANALYSIS.md` in the upstream `mql5-codegraph` for the
   original O(n·m) failure this design avoids).
+- Incremental indexing (`--incremental`) skips the lex + parse + call-site extraction cost for
+  unchanged files entirely (loaded from the persisted cache) while always running full
+  repository-wide resolution for correctness.
 - Graph queries run over immutable sorted indexes; context and path searches are bounded by
   explicit `max_depth`/`max_expansions`/`max_items` limits.
 

@@ -47,7 +47,10 @@ A single, coherent system that combines:
 - **adapters**: a `mql5kg` CLI, an HTTP API, an MCP server, and legacy
   compatibility entry points — all projections over the same kernel;
 - **optional isolated subsystems**: a reference corpus (MQL5 docs/PDFs) and a
-  Graphify semantic overlay that can never become graph truth.
+  Graphify semantic overlay that can never become graph truth;
+- **sound incremental indexing** (`--incremental`): unchanged files skip
+  re-parsing via a persisted content-hash cache while repository-wide
+  resolution always runs, so results equal a full rebuild.
 
 Ambiguity is preserved (never invented away). Evidence is preserved on every
 relationship (never silently upgraded). Analysis is deterministic (same source
@@ -69,6 +72,9 @@ Requires Python 3.10+.
 ```bash
 # Index a project into a canonical graph
 mql5kg index ./path/to/MQL5/Experts -o graph.json
+
+# Incremental re-index (reuses parsed unchanged files)
+mql5kg index ./path/to/MQL5/Experts --incremental -o graph.json
 
 # Query
 mql5kg search graph.json "position"
@@ -160,7 +166,7 @@ src layout (package: mql5_kg/)
 ├── runtime                # runtime/event relationships (separate from calls)
 ├── evidence/diagnostics   # provenance vocabulary + machine-readable diagnostics
 ├── graph                  # canonical CodeGraph, validation, snapshots
-├── index                  # deterministic GraphIndex
+├── index/incremental      # deterministic GraphIndex + incremental parser cache
 ├── intelligence/          # Intelligence Kernel + contract models
 ├── context/               # budgeted context engine
 ├── reference/             # optional reference corpus (isolated)

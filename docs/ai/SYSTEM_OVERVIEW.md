@@ -62,6 +62,7 @@ GraphIndex ── IntelligenceKernel ── CLI / HTTP / MCP
 | `graph.py` | Canonical `CodeGraph` |
 | `snapshots.py` | Immutable published graph |
 | `index.py` `indexer.py` | GraphIndex + end-to-end analysis |
+| `incremental.py` | Sound incremental analysis (persisted parse cache) |
 | `evidence.py` `diagnostics.py` | Provenance + diagnostics |
 | `analysis_budget.py` | Deterministic work budget |
 | `intelligence/kernel.py` | All query operations |

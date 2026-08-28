@@ -1,6 +1,6 @@
 # Testing
 
-The project carries a serious, layered test suite. **197 tests pass.**
+The project carries a serious, layered test suite. **208 tests pass.**
 
 ## Run the tests
 
@@ -32,6 +32,7 @@ tests/
 ├── test_compat.py                 # legacy graphify / MQL5Parser facade
 ├── test_adversarial.py            # robustness against broken input
 ├── test_security.py               # path traversal, budget, fingerprint, env
+├── test_incremental.py            # reuse / changed re-parse / determinism
 ├── test_regression.py             # previously-fixed bugs stay fixed
 ├── test_compiler_evidence.py      # compiler-log correlation
 └── test_benchmark_token.py        # token-efficiency measurement

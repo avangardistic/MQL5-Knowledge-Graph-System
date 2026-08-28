@@ -43,6 +43,7 @@ Package layout (`mql5_kg/`):
 | `evidence.py`, `diagnostics.py` | Provenance vocabulary + machine-readable diagnostics |
 | `analysis_budget.py` | Deterministic analysis work budget |
 | `index.py`, `indexer.py` | Deterministic `GraphIndex` + end-to-end analysis |
+| `incremental.py` | Sound incremental analysis (persisted content-hash `FileCache`, parse unchanged files, always full resolution) |
 | `intelligence/` | Intelligence Kernel + versioned contract models |
 | `context/` | Budgeted context engine |
 | `reference/` | Optional reference corpus + Graphify overlay (isolated) |
@@ -97,7 +98,7 @@ exists*.
 ## Testing and build commands
 
 ```bash
-python -m pytest -q                 # full suite (197 tests)
+python -m pytest -q                 # full suite (208 tests)
 python -m pytest tests/test_parser.py   # single file
 python -m compileall -q mql5_kg     # syntax check the package
 mql5kg index sample_mql5 -o /tmp/graph.json --json   # CLI smoke test
@@ -105,7 +106,8 @@ pip install -e ".[dev]"             # dev dependencies (pytest, pytest-asyncio, 
 ```
 
 Run `python -m pytest` after any non-trivial change. Add a test that exercises
-your change. The suite includes unit, regression, adversarial, security,
+your change. The suite includes unit, regression, incremental (reuse / changed re-parse /
+determinism vs full rebuild / corrupt-cache fallback), adversarial, security,
 invariant/property, and wire-protocol MCP tests.
 
 ## MCP rules and security
