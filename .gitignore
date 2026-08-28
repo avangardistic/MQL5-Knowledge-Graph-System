@@ -1,1 +1,32 @@
-(graph.json and mql5_kg/mcp_server/server.py are source/config files, no build artifacts, dependencies, or temp files in the changes)
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# Test and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Generated analysis artifacts (never commit graph dumps)
+graph.json
+GRAPH_REPORT.md
+*.graphml
+graphify-out/
+
+# Benchmarks and logs
+*.log
+compiler_errors.txt
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
