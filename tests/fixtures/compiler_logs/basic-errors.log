@@ -1,0 +1,5 @@
+2026.07.29 12:00:00.000    compiling 'BasicEA.mq5'
+BasicEA.mq5(18,6) : error 101: order submission failed validation
+BasicEA.mq5(14,18) : warning 302: lot calculation review warning
+C:\outside\Secret.mqh(1,1) : error 106: include is unavailable
+2026.07.29 12:00:00.020    Result: 2 errors, 1 warnings, 20 msec elapsed, cpu='X64 Regular'

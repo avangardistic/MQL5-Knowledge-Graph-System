@@ -1,0 +1,4 @@
+2026.07.29 12:00:00.000    compiling 'BasicEA.mq5'
+BasicEA.mq5(12,6) : warning 301: event handler review warning
+Risk.mqh(6,11) : warning 302: risk calculation review warning
+2026.07.29 12:00:00.020    Result: 0 errors, 2 warnings, 20 msec elapsed, cpu='X64 Regular'

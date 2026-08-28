@@ -25,6 +25,10 @@ graphify-out/
 *.log
 compiler_errors.txt
 
+# Compiler-log fixtures are intentional test data and must be committed
+!tests/fixtures/compiler_logs/
+!tests/fixtures/compiler_logs/*.log
+
 # OS / editor
 .DS_Store
 Thumbs.db
