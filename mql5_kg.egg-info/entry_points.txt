@@ -1,0 +1,3 @@
+[console_scripts]
+graphify = mql5_kg.cli.graphify:main
+mql5-kg = mql5_kg.cli.graphify:main
