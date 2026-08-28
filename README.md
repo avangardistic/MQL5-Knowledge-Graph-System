@@ -1,197 +1,393 @@
 # MQL5 Knowledge Graph System
 
-[![Python](https://img.shields.io/badge/Python-3.10+-green.svg)](https://python.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+**Production-grade static analysis, knowledge graph, and AI intelligence platform for MQL5 codebases.**
 
-A production-grade **MQL5 parser, static-analysis engine, canonical knowledge
-graph, code-intelligence engine, and AI integration platform** for MQL5
-codebases. It lets AI coding agents understand MQL5 repositories structurally
-and relationally while dramatically reducing the source context — and therefore
-the token consumption — required for a task.
+[![Tests](https://github.com/avangardistic/MQL5-Knowledge-Graph-System/actions/workflows/ci.yml/badge.svg)](https://github.com/avangardistic/MQL5-Knowledge-Graph-System/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-```
-Developer edits MQL5 code
-        │
-        ▼
- MQL5 Knowledge Graph
-        │
-        ▼
- Intelligence Kernel
-        │
-        ▼
- CLI / HTTP / MCP
-        │
-        ▼
-     AI Coding Agent
-        │
-        ▼
- "What does this change affect?"
-        │
-        ▼
- Compact structural context + targeted source
+---
+
+## What Is This?
+
+**MQL5 Knowledge Graph System** is a complete platform that transforms MQL5 codebases into a precise, queryable, evidence-backed knowledge graph. It helps AI coding assistants understand code structurally and relationally while **dramatically reducing token consumption**.
+
+Instead of feeding AI agents thousands of lines of source code, you give them compact structural context:
+
+```text
+OnTick
+├── Callers: none (entry point)
+├── Callees:
+│   ├── CheckSignal
+│   ├── OpenPosition
+│   └── ManagePositions
+├── Dependencies:
+│   ├── Trade.mqh
+│   └── PositionInfo.mqh
+└── Impact: 12 dependent symbols
 ```
 
-## What it is
+That is a few hundred tokens of structural context instead of thousands of tokens of dense source code — with evidence on every relationship, so the AI can trust *why* each edge exists.
 
-A single, coherent system that combines:
+---
 
-- a **tolerant MQL5 lexer and structural parser** (comments, strings, macros,
-  `#import` blocks, event handlers, classes, overloads, broken source);
-- a **canonical knowledge graph** with typed, evidence-backed relationships
-  (`calls`, `includes`, `defines`, `references`, `inherits`, `runtime_dispatches`,
-  …) and source locations;
-- a **deterministic Intelligence Kernel** (symbol search, callers/callees,
-  impact analysis, execution tracing, diagnostics, context packages);
-- a **context engine** that packs structural records under an explicit unit
-  budget and truthfully reports omissions;
-- **adapters**: a `mql5kg` CLI, an HTTP API, an MCP server, and legacy
-  compatibility entry points — all projections over the same kernel;
-- **optional isolated subsystems**: a reference corpus (MQL5 docs/PDFs) and a
-  Graphify semantic overlay that can never become graph truth;
-- **sound incremental indexing** (`--incremental`): unchanged files skip
-  re-parsing via a persisted content-hash cache while repository-wide
-  resolution always runs, so results equal a full rebuild.
+## Why Does It Exist?
+
+MQL5 coding agents face a fundamental problem:
+
+- **MQL5 codebases are complex** — multiple files, deep includes, many dependencies
+- **AI context windows are limited** — feeding entire source trees wastes tokens
+- **AI needs structure** — understanding relationships is more important than reading every line
+
+This system solves that by providing:
+
+1. **Structural understanding** — not just text, but a graph of relationships
+2. **Evidence-backed intelligence** — every relationship explains *why* it exists
+3. **Token-efficient context** — compact packages with deterministic budgets
+4. **AI-native interfaces** — MCP, CLI, and HTTP API
 
 Ambiguity is preserved (never invented away). Evidence is preserved on every
-relationship (never silently upgraded). Analysis is deterministic (same source
-+ same configuration ⇒ same graph identity). Failed analysis never replaces the
+edge (never silently upgraded). Analysis is deterministic (same source +
+same configuration ⇒ same graph identity). Failed analysis never replaces the
 last valid snapshot.
+
+---
+
+## Architecture
+
+```text
+                         MQL5 SOURCE CODE
+                                │
+                                ▼
+                       Source Discovery
+                                │
+                                ▼
+                          MQL5 Lexer
+                                │
+                                ▼
+                      Structural Parser
+                                │
+                                ▼
+                         AST / IR Layer
+                                │
+                                ▼
+                       Symbol Extraction
+                                │
+                                ▼
+                       Scope Resolution
+                                │
+                                ▼
+                       Include Resolution
+                                │
+                                ▼
+                        Call Resolution
+                                │
+                                ▼
+                       Runtime Enrichment
+                                │
+                                ▼
+                   Canonical MQL5 CodeGraph
+                                │
+                                ▼
+                         Graph Index
+                                │
+                                ▼
+                      Intelligence Kernel
+                                │
+             ┌──────────────────┼──────────────────┐
+             │                  │                  │
+             ▼                  ▼                  ▼
+            CLI                API                MCP
+             │                  │                  │
+             └──────────────────┼──────────────────┘
+                                │
+                                ▼
+                         AI Coding Agents
+```
+
+Every adapter is a thin projection over the **Intelligence Kernel**; no
+adapter implements graph semantics. The core requires only the Python
+standard library; `mcp`, `pypdf`, and `pypdfium2` are optional extras.
+
+---
 
 ## Installation
 
 ```bash
-pip install -e .            # core (stdlib only)
-pip install -e ".[mcp]"     # + MCP server
-pip install -e ".[dev]"     # + test dependencies
+# Core (Python standard library only)
+pip install -e .
+
+# Optional: MCP server support
+pip install -e ".[mcp]"
+
+# Optional: reference corpus build support (PDFs)
+pip install -e ".[reference]"
 ```
 
 Requires Python 3.10+.
 
-## Quick start
+---
+
+## Quick Start
+
+### 1. Index an MQL5 Project
 
 ```bash
-# Index a project into a canonical graph
-mql5kg index ./path/to/MQL5/Experts -o graph.json
+mql5kg index /path/to/your/project -o graph.json
+```
 
-# Incremental re-index (reuses parsed unchanged files)
-mql5kg index ./path/to/MQL5/Experts --incremental -o graph.json
+Re-index faster by reusing parsed unchanged files (and always running full,
+correct resolution):
 
-# Query
-mql5kg search graph.json "position"
-mql5kg symbol graph.json ClosePosition
-mql5kg callers graph.json ClosePosition
+```bash
+mql5kg index /path/to/your/project --incremental -o graph.json
+```
+
+### 2. Query the Graph
+
+```bash
+# Show project status
+mql5kg status graph.json --json
+
+# Search for a symbol
+mql5kg search graph.json "OnTick"
+
+# Show symbol details
+mql5kg symbol graph.json OnTick
+
+# Show callers / callees
+mql5kg callers graph.json CalculateRisk
 mql5kg callees graph.json OnTick
+
+# Find references
+mql5kg references graph.json Trade.mqh
+
+# Impact analysis
 mql5kg impact graph.json CalculateRisk
+```
+
+### 3. Get AI-Ready Context
+
+```bash
+# Compact context with a deterministic budget
+mql5kg context graph.json OnTick --budget 50
+
+# Trace execution path with per-hop evidence
 mql5kg trace graph.json OnTick OrderSend
-mql5kg context graph.json OnTick --budget 60
-mql5kg diagnostics graph.json
+
+# Export graph (graphml | markdown | json)
 mql5kg export graph.json --format graphml -o graph.graphml
-
-# Machine-readable JSON everywhere
-mql5kg impact graph.json CalculateRisk --json
-
-# HTTP API
-mql5kg serve --graph graph.json --port 8765
 ```
 
-### MCP
+Append `--json` to any command for full machine-readable output.
+
+### 4. Use with MCP
 
 ```bash
-mql5kg-mcp          # stdio MCP server (or: python -m mql5_kg.adapters.mcp.server)
+# Start the MCP server (stdio)
+mql5kg-mcp
+
+# Connect from Claude, Cursor, or any MCP-compatible AI client
 ```
 
-Configure the server in your MCP client with command `mql5kg-mcp` (or
-`python -m mql5_kg.adapters.mcp.server`). The server exposes
-`project_status`, `index_project`, `search_symbols`, `get_symbol`,
-`get_symbol_context`, `find_callers`, `find_callees`, `find_references`,
-`find_dependencies`, `resolve_include`, `impact_analysis`,
-`trace_execution_flow`, `get_diagnostics`, and `get_context_package` — all
-read-only, bounded, and confined to the operator-selected project root.
+---
 
-Legacy commands still work unchanged:
+## Key Features
 
-```bash
-python -m mql5_kg.cli.graphify build .
-python -m mql5_kg.cli.graphify query symbol OnTick
-python -m mql5_kg.cli.graphify query impact ClosePosition
-python -m mql5_kg.cli.graphify query trace OnTick OrderSend
-python -m mql5_kg.cli.graphify serve
-```
+### 🔍 Tolerant Parser
+- Handles incomplete, malformed, and partially edited code
+- Preserves source locations (file, line, column)
+- Immune to code-looking strings and comments (no phantom call edges)
+- Parses large files in near-linear time
 
-## Example
+### 🧠 Canonical Knowledge Graph
+- Symbols, scopes, files, and typed relationships
+- Evidence-backed provenance (origin + confidence + location)
+- Deterministic IDs and serialization; immutable snapshots
 
-`mql5kg context graph.json CloseBasket --budget 60` produces a compact package:
+### 🔬 Intelligence Kernel
+- Search symbols, callers, callees, references, dependencies
+- Impact analysis, execution-path tracing
+- Deterministic, versioned contract (`query`, `context`, `impact`, `path`, `context_package`, `diagnostics`)
 
-```
-matched 'CloseBasket'
-context budget 60/60
-omitted relationships: 3
-omitted search_space: None
-```
+### 📊 Context Engine
+- Budgeted context packages with atomic relationship packing
+- Deterministic ranking; truthful omission reporting
+- Token-efficient output for AI agents
 
-`--json` returns the full machine-readable contract with node summaries,
-relationship evidence (origin, confidence, location), and truthful omission
-reasons.
+### ⚡ Incremental Indexing
+- Persisted content-hash cache reuses parsed unchanged files
+- Only changed/added files are re-parsed; resolution always runs fully (correct by construction)
+- Safe fallback to a full rebuild on a missing or corrupted cache
 
-## Documentation
+### 🤖 MCP Integration
+- AI-native interface, 16 read-only tools
+- Security-bound filesystem access (project-root confinement)
+- Snapshot-consistency fingerprint checks
 
-| Audience | Where |
-|----------|-------|
-| Human developers | `docs/` — architecture, parser, graph, intelligence, context engine, CLI, MCP, reference corpus, Graphify, configuration, security, testing, benchmarking, troubleshooting |
-| AI coding agents | `docs/ai/` — contracts, invariants, graph/symbol/relationship/evidence/resolution models, MCP tools, error and security models, extension and change guides |
-| Future agents | `AGENTS.md` |
+### 📚 Optional Reference Corpus
+- Offline PDF documentation ingestion
+- Page-aware search with citations
+- Separated from code-graph truth (never becomes graph truth)
 
-Key invariants (see `docs/ai/ARCHITECTURE_INVARIANTS.md`):
+---
 
-1. One authoritative `CodeGraph` per analysis.
-2. Graph semantics live in the core, never in adapters.
-3. Relationships preserve origin and evidence.
-4. Ambiguity stays ambiguous.
-5. Deterministic graph identity and query results.
-6. One request never mixes graph revisions.
-7. MCP/HTTP never expand filesystem access.
-8. Context budgets are explicit and enforced.
-9. Removing MCP never breaks the parser or kernel.
-10. Reference knowledge never silently becomes graph truth.
-11. Semantic overlay inference stays labeled as inference.
-12. Failed analysis never replaces the last valid graph.
+## CLI Commands
 
-## Architecture
+| Command | Description |
+|---------|-------------|
+| `index` | Index an MQL5 project into a graph (`--incremental`, `--cache`) |
+| `status` | Show project graph status |
+| `search` | Search for symbols |
+| `symbol` | Get symbol details |
+| `callers` | List all callers of a symbol |
+| `callees` | List all callees of a symbol |
+| `references` | Find references to a symbol or file |
+| `impact` | Analyze impact of changes |
+| `trace` | Trace execution paths |
+| `context` | Get a budgeted AI context package |
+| `diagnostics` | Show analysis diagnostics |
+| `export` | Export graph (graphml \| markdown \| json) |
+| `serve` | Start the HTTP API server |
 
-```
-src layout (package: mql5_kg/)
-├── lexer/parser/ir        # tolerant MQL5 front-end
-├── symbols/scopes         # canonical symbol + scope models
-├── resolver               # includes, scopes, calls, ambiguity
-├── runtime                # runtime/event relationships (separate from calls)
-├── evidence/diagnostics   # provenance vocabulary + machine-readable diagnostics
-├── graph                  # canonical CodeGraph, validation, snapshots
-├── index/incremental      # deterministic GraphIndex + incremental parser cache
-├── intelligence/          # Intelligence Kernel + contract models
-├── context/               # budgeted context engine
-├── reference/             # optional reference corpus (isolated)
-├── compiler_evidence.py   # optional external compiler log correlation
-├── benchmarks/            # token-efficiency benchmark
-├── exporters/             # graphml / markdown / json
-└── adapters/              # cli, http, mcp (thin projections)
-```
+All commands support `--json` for machine-readable output.
 
-Every adapter calls the Intelligence Kernel; no adapter implements graph
-semantics. `mql5-codegraph` is not a runtime dependency — it was used only as a
-source of architecture and patterns (see `THIRD_PARTY_NOTICES.md`).
+---
+
+## MCP Tools
+
+| Tool | Description |
+|------|-------------|
+| `project_status` | Report the active in-memory snapshot |
+| `index_project` | Read a trusted project into an in-memory graph |
+| `search_symbols` | Search symbols by name/qualified name |
+| `get_symbol` | Resolve one symbol (definition + location) |
+| `get_symbol_context` | Bounded context: definition, callers, callees, dependencies |
+| `find_callers` | Who calls this symbol? |
+| `find_callees` | What does this symbol call? |
+| `find_references` | All references to a symbol |
+| `find_dependencies` | File/symbol dependencies (includes, defines) |
+| `get_file_summary` | File location, line count, defined symbols |
+| `resolve_include` / `resolve_includes` | Resolve single / recursive include chains |
+| `impact_analysis` | Bounded upstream impact of a change |
+| `trace_execution_flow` | Directed paths with per-hop evidence |
+| `get_diagnostics` | Ordered graph diagnostics |
+| `get_context_package` | Budgeted context package for AI review |
+
+Every tool is read-only, bounded, and confined to the operator-selected
+project root.
+
+---
+
+## Token Efficiency
+
+**Real measured results** (recorded under `docs/benchmarks/`):
+
+For a representative 40-file, ~455 KB MQL5 repository, a fixed-budget
+(60-unit) structural context package for one symbol:
+
+| Context Type | Estimated Tokens |
+|--------------|------------------|
+| Raw source (all files) | ~113,700 |
+| Graph context package (60 units) | ~10,900 |
+
+The context package is **~9.6%** of the raw source tokens while carrying
+the symbol's definition, direct callers/callees, dependencies, and
+diagnostics with evidence. Numbers are measured with a conservative
+`chars / 4` token estimate — no unsupported savings are claimed (see
+`docs/benchmarking.md` for methodology, including the honest note that on a
+tiny 2-file repo a large fixed package can exceed raw source).
+
+---
+
+## Security
+
+- **MCP filesystem access** is restricted to the authorized project root (+ explicit include roots)
+- **Path traversal attempts** (`../`, absolute paths, symlink escapes) are rejected
+- **No credentials** are stored or transmitted; subprocess env is restricted
+- **Graphify/LLM** inference is optional, isolated, and labeled `semantic_overlay_inference`
+- **Reference corpus** is offline, hash-verified, and operator-controlled
+
+See `docs/security.md` and `docs/ai/SECURITY_MODEL.md`.
+
+---
 
 ## Development
 
 ```bash
-python -m pytest            # full suite (unit, adversarial, security, invariants)
+pip install -e ".[test]"     # pytest, pytest-asyncio, mcp
+
+python -m pytest -v          # full suite (208 tests)
+mql5kg index sample_mql5 -o graph.json --json   # CLI smoke test
 python -m mql5_kg.benchmarks.token_efficiency sample_mql5 --symbol OnTick
 ```
 
+CI (`.github/workflows/ci.yml`) runs the full suite on Python 3.10 / 3.11 /
+3.12 on every push/PR to `main`.
+
+---
+
+## Documentation
+
+| Audience | Location |
+|----------|----------|
+| Human | [`docs/`](docs/) |
+| AI Agent | [`docs/ai/`](docs/ai/) |
+| Agent Instructions | [`AGENTS.md`](AGENTS.md) |
+| Final Report | [`FINAL_REPORT.md`](FINAL_REPORT.md) |
+
+---
+
+## Known Limitations
+
+- **Analysis budget**: the default 1M-unit budget supports roughly ~250 KB of dense source. Larger projects must raise `--max-work` (documented in `docs/configuration.md`).
+- **Type inference** is best-effort; ambiguous overloads are preserved as ambiguous rather than guessed (by design).
+- **Incremental indexing is parse-incremental, not resolution-incremental**: unchanged files skip re-parsing, but repository-wide resolution always runs to guarantee correctness.
+- **Reference corpus**: implemented and security-tested, but requires operator-supplied PDFs and, for the optional Graphify overlay, the external `graphify` binary + a supported backend.
+
+---
+
+## Roadmap
+
+- [x] Core tolerant lexer and structural parser
+- [x] Canonical evidence-backed knowledge graph + immutable snapshots
+- [x] Intelligence Kernel (`query`, `context`, `impact`, `path`, `context_package`, `diagnostics`)
+- [x] Budgeted context engine with omission reporting
+- [x] Sound incremental indexing (`--incremental`)
+- [x] MCP integration (16 read-only, security-bound tools)
+- [x] CLI and HTTP API adapters
+- [x] Test suite (208 tests: unit, adversarial, security, invariants, wire protocol, incremental)
+- [x] Human and AI documentation
+- [x] CI/CD workflow (Python 3.10–3.12)
+- [ ] Git-diff-aware change analysis (index only files changed since a commit)
+- [ ] VS Code extension
+- [ ] GitHub Action integration
+
+---
+
+## Contributing
+
+Please read [`docs/contributing.md`](docs/contributing.md) before proposing changes.
+
+---
+
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT License. See [`LICENSE`](LICENSE).
 
-## Disclaimer
+## Credits
 
-For development assistance only. Always test MQL5 code in demo environments
-before live deployment. Trading involves substantial risk.
+This project is a fundamental rewrite of the original `MQL5-Knowledge-Graph-System`, incorporating proven ideas from `mql5-codegraph`. Both repositories are by the same author and are MIT-licensed. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
+---
+
+## Community
+
+- ⭐ **Star** this repository to help others discover it
+- 🐛 **Report issues** through GitHub Issues
+- 💬 **Start discussions** in GitHub Discussions
+- 🔒 **Report vulnerabilities** through GitHub's security reporting
+
+---
+
+**Built for MQL5 developers and AI coding agents.**
