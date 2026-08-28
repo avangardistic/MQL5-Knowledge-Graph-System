@@ -1,15 +1,16 @@
 {
   "metadata": {
-    "generated_at": "2026-08-27T17:28:11.436172",
+    "generated_at": "2026-08-27T20:40:48.256336",
     "version": "1.0.0"
   },
   "statistics": {
-    "total_symbols": 24,
-    "total_edges": 129,
+    "total_symbols": 27,
+    "total_edges": 79,
     "total_files": 2,
     "by_type": {
-      "function": 13,
-      "global_variable": 6,
+      "function": 12,
+      "input_variable": 7,
+      "global_variable": 3,
       "event_handler": 3,
       "property": 2
     }
@@ -33,8 +34,8 @@
       "name": "CalculateLotSize",
       "type": "function",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 16,
-      "return_type": "void",
+      "line_start": 12,
+      "return_type": "double",
       "parameters": "double stopLossPoints",
       "is_event_handler": false
     },
@@ -42,8 +43,8 @@
       "name": "CanOpenPosition",
       "type": "function",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 40,
-      "return_type": "void",
+      "line_start": 36,
+      "return_type": "bool",
       "parameters": "",
       "is_event_handler": false
     },
@@ -51,8 +52,8 @@
       "name": "IsDailyLimitReached",
       "type": "function",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 54,
-      "return_type": "void",
+      "line_start": 50,
+      "return_type": "bool",
       "parameters": "",
       "is_event_handler": false
     },
@@ -60,7 +61,7 @@
       "name": "ResetDailyStats",
       "type": "function",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 94,
+      "line_start": 90,
       "return_type": "void",
       "parameters": "",
       "is_event_handler": false
@@ -69,8 +70,8 @@
       "name": "GetCurrentRiskPercent",
       "type": "function",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 103,
-      "return_type": "void",
+      "line_start": 99,
+      "return_type": "double",
       "parameters": "",
       "is_event_handler": false
     },
@@ -78,52 +79,52 @@
       "name": "IsAccountInDanger",
       "type": "function",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 118,
-      "return_type": "void",
+      "line_start": 114,
+      "return_type": "bool",
       "parameters": "double thresholdPercent",
       "is_event_handler": false
     },
-    "0": {
-      "name": "0",
-      "type": "global_variable",
+    "MaxRiskPercent": {
+      "name": "MaxRiskPercent",
+      "type": "input_variable",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 23,
-      "data_type": "return"
+      "line_start": 1,
+      "data_type": "double"
     },
-    "lots": {
-      "name": "lots",
-      "type": "global_variable",
+    "MaxDailyLoss": {
+      "name": "MaxDailyLoss",
+      "type": "input_variable",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 34,
-      "data_type": "return"
+      "line_start": 7,
+      "data_type": "int"
     },
-    "false": {
-      "name": "false",
-      "type": "global_variable",
+    "MaxOpenPositions": {
+      "name": "MaxOpenPositions",
+      "type": "input_variable",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 43,
-      "data_type": "return"
+      "line_start": 8,
+      "data_type": "int"
     },
-    "true": {
-      "name": "true",
+    "dailyStartBalance": {
+      "name": "dailyStartBalance",
       "type": "global_variable",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 48,
-      "data_type": "return"
+      "line_start": 10,
+      "data_type": "double"
     },
-    "currentTime": {
-      "name": "currentTime",
+    "todayTrades": {
+      "name": "todayTrades",
       "type": "global_variable",
       "file": "sample_mql5/RiskManager.mqh",
-      "line_start": 56,
-      "data_type": "MqlDateTime"
+      "line_start": 11,
+      "data_type": "int"
     },
     "OnInit": {
       "name": "OnInit",
       "type": "event_handler",
       "file": "sample_mql5/SampleEA.mq5",
-      "line_start": 19,
-      "return_type": "void",
+      "line_start": 15,
+      "return_type": "int",
       "parameters": "",
       "is_event_handler": true
     },
@@ -131,7 +132,7 @@
       "name": "OnDeinit",
       "type": "event_handler",
       "file": "sample_mql5/SampleEA.mq5",
-      "line_start": 36,
+      "line_start": 32,
       "return_type": "void",
       "parameters": "const int reason",
       "is_event_handler": true
@@ -140,7 +141,7 @@
       "name": "OnTick",
       "type": "event_handler",
       "file": "sample_mql5/SampleEA.mq5",
-      "line_start": 45,
+      "line_start": 41,
       "return_type": "void",
       "parameters": "",
       "is_event_handler": true
@@ -149,7 +150,7 @@
       "name": "OpenBuyOrder",
       "type": "function",
       "file": "sample_mql5/SampleEA.mq5",
-      "line_start": 76,
+      "line_start": 72,
       "return_type": "void",
       "parameters": "",
       "is_event_handler": false
@@ -158,7 +159,7 @@
       "name": "CloseAllPositions",
       "type": "function",
       "file": "sample_mql5/SampleEA.mq5",
-      "line_start": 104,
+      "line_start": 100,
       "return_type": "void",
       "parameters": "",
       "is_event_handler": false
@@ -167,7 +168,7 @@
       "name": "ClosePosition",
       "type": "function",
       "file": "sample_mql5/SampleEA.mq5",
-      "line_start": 119,
+      "line_start": 115,
       "return_type": "void",
       "parameters": "ulong ticket",
       "is_event_handler": false
@@ -176,17 +177,8 @@
       "name": "CountPositions",
       "type": "function",
       "file": "sample_mql5/SampleEA.mq5",
-      "line_start": 146,
-      "return_type": "void",
-      "parameters": "",
-      "is_event_handler": false
-    },
-    "PositionsTotal": {
-      "name": "PositionsTotal",
-      "type": "function",
-      "file": "sample_mql5/SampleEA.mq5",
-      "line_start": 148,
-      "return_type": "void",
+      "line_start": 142,
+      "return_type": "int",
       "parameters": "",
       "is_event_handler": false
     },
@@ -194,7 +186,7 @@
       "name": "TrailPositions",
       "type": "function",
       "file": "sample_mql5/SampleEA.mq5",
-      "line_start": 154,
+      "line_start": 150,
       "return_type": "void",
       "parameters": "",
       "is_event_handler": false
@@ -203,10 +195,38 @@
       "name": "ModifyPositionSL",
       "type": "function",
       "file": "sample_mql5/SampleEA.mq5",
-      "line_start": 179,
+      "line_start": 175,
       "return_type": "void",
       "parameters": "ulong ticket, double newSL",
       "is_event_handler": false
+    },
+    "LotSize": {
+      "name": "LotSize",
+      "type": "input_variable",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 7,
+      "data_type": "double"
+    },
+    "StopLoss": {
+      "name": "StopLoss",
+      "type": "input_variable",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 9,
+      "data_type": "int"
+    },
+    "TakeProfit": {
+      "name": "TakeProfit",
+      "type": "input_variable",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 10,
+      "data_type": "int"
+    },
+    "UseTrailingStop": {
+      "name": "UseTrailingStop",
+      "type": "input_variable",
+      "file": "sample_mql5/SampleEA.mq5",
+      "line_start": 11,
+      "data_type": "bool"
     },
     "handleMA": {
       "name": "handleMA",
@@ -221,7 +241,7 @@
       "file": "sample_mql5/SampleEA.mq5",
       "line_start": 5,
       "property_type": "copyright",
-      "value": "\"Sample\""
+      "value": "\"\""
     },
     "property_version": {
       "name": "property_version",
@@ -229,7 +249,7 @@
       "file": "sample_mql5/SampleEA.mq5",
       "line_start": 6,
       "property_type": "version",
-      "value": "\"1.00\""
+      "value": "\"\""
     }
   },
   "edges": [
@@ -264,27 +284,27 @@
       "type": "DEFINED_IN"
     },
     {
-      "source": "0",
+      "source": "MaxRiskPercent",
       "target": "sample_mql5/RiskManager.mqh",
       "type": "DEFINED_IN"
     },
     {
-      "source": "lots",
+      "source": "MaxDailyLoss",
       "target": "sample_mql5/RiskManager.mqh",
       "type": "DEFINED_IN"
     },
     {
-      "source": "false",
+      "source": "MaxOpenPositions",
       "target": "sample_mql5/RiskManager.mqh",
       "type": "DEFINED_IN"
     },
     {
-      "source": "true",
+      "source": "dailyStartBalance",
       "target": "sample_mql5/RiskManager.mqh",
       "type": "DEFINED_IN"
     },
     {
-      "source": "currentTime",
+      "source": "todayTrades",
       "target": "sample_mql5/RiskManager.mqh",
       "type": "DEFINED_IN"
     },
@@ -300,11 +320,6 @@
     },
     {
       "source": "CalculateLotSize",
-      "target": "IsDailyLimitReached",
-      "type": "CALLS"
-    },
-    {
-      "source": "CalculateLotSize",
       "target": "ResetDailyStats",
       "type": "CALLS"
     },
@@ -316,16 +331,6 @@
     {
       "source": "CalculateLotSize",
       "target": "IsAccountInDanger",
-      "type": "CALLS"
-    },
-    {
-      "source": "CalculateLotSize",
-      "target": "GetCurrentRiskPercent",
-      "type": "CALLS"
-    },
-    {
-      "source": "CanOpenPosition",
-      "target": "IsDailyLimitReached",
       "type": "CALLS"
     },
     {
@@ -349,11 +354,6 @@
       "type": "CALLS"
     },
     {
-      "source": "CanOpenPosition",
-      "target": "GetCurrentRiskPercent",
-      "type": "CALLS"
-    },
-    {
       "source": "IsDailyLimitReached",
       "target": "ResetDailyStats",
       "type": "CALLS"
@@ -369,11 +369,6 @@
       "type": "CALLS"
     },
     {
-      "source": "IsDailyLimitReached",
-      "target": "GetCurrentRiskPercent",
-      "type": "CALLS"
-    },
-    {
       "source": "ResetDailyStats",
       "target": "GetCurrentRiskPercent",
       "type": "CALLS"
@@ -381,11 +376,6 @@
     {
       "source": "ResetDailyStats",
       "target": "IsAccountInDanger",
-      "type": "CALLS"
-    },
-    {
-      "source": "ResetDailyStats",
-      "target": "GetCurrentRiskPercent",
       "type": "CALLS"
     },
     {
@@ -434,17 +424,32 @@
       "type": "DEFINED_IN"
     },
     {
-      "source": "PositionsTotal",
-      "target": "sample_mql5/SampleEA.mq5",
-      "type": "DEFINED_IN"
-    },
-    {
       "source": "TrailPositions",
       "target": "sample_mql5/SampleEA.mq5",
       "type": "DEFINED_IN"
     },
     {
       "source": "ModifyPositionSL",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "LotSize",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "StopLoss",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "TakeProfit",
+      "target": "sample_mql5/SampleEA.mq5",
+      "type": "DEFINED_IN"
+    },
+    {
+      "source": "UseTrailingStop",
       "target": "sample_mql5/SampleEA.mq5",
       "type": "DEFINED_IN"
     },
@@ -495,47 +500,7 @@
     },
     {
       "source": "OnInit",
-      "target": "OpenBuyOrder",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnInit",
-      "target": "CloseAllPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnInit",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnInit",
       "target": "ClosePosition",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnInit",
-      "target": "ClosePosition",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnInit",
-      "target": "CountPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnInit",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnInit",
-      "target": "TrailPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnInit",
-      "target": "PositionsTotal",
       "type": "CALLS"
     },
     {
@@ -570,52 +535,7 @@
     },
     {
       "source": "OnDeinit",
-      "target": "OpenBuyOrder",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnDeinit",
-      "target": "CloseAllPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnDeinit",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnDeinit",
       "target": "ClosePosition",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnDeinit",
-      "target": "ClosePosition",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnDeinit",
-      "target": "CountPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnDeinit",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnDeinit",
-      "target": "TrailPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnDeinit",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnDeinit",
-      "target": "ModifyPositionSL",
       "type": "CALLS"
     },
     {
@@ -645,52 +565,7 @@
     },
     {
       "source": "OnTick",
-      "target": "OpenBuyOrder",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnTick",
-      "target": "CloseAllPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnTick",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnTick",
       "target": "ClosePosition",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnTick",
-      "target": "ClosePosition",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnTick",
-      "target": "CountPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnTick",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnTick",
-      "target": "TrailPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnTick",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OnTick",
-      "target": "ModifyPositionSL",
       "type": "CALLS"
     },
     {
@@ -705,16 +580,6 @@
     },
     {
       "source": "OpenBuyOrder",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OpenBuyOrder",
-      "target": "ClosePosition",
-      "type": "CALLS"
-    },
-    {
-      "source": "OpenBuyOrder",
       "target": "ClosePosition",
       "type": "CALLS"
     },
@@ -725,37 +590,12 @@
     },
     {
       "source": "OpenBuyOrder",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OpenBuyOrder",
       "target": "TrailPositions",
       "type": "CALLS"
     },
     {
       "source": "OpenBuyOrder",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "OpenBuyOrder",
       "target": "ModifyPositionSL",
-      "type": "CALLS"
-    },
-    {
-      "source": "OpenBuyOrder",
-      "target": "ModifyPositionSL",
-      "type": "CALLS"
-    },
-    {
-      "source": "CloseAllPositions",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "CloseAllPositions",
-      "target": "ClosePosition",
       "type": "CALLS"
     },
     {
@@ -770,22 +610,7 @@
     },
     {
       "source": "CloseAllPositions",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "CloseAllPositions",
       "target": "TrailPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "CloseAllPositions",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "CloseAllPositions",
-      "target": "ModifyPositionSL",
       "type": "CALLS"
     },
     {
@@ -800,32 +625,12 @@
     },
     {
       "source": "ClosePosition",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "ClosePosition",
       "target": "TrailPositions",
       "type": "CALLS"
     },
     {
       "source": "ClosePosition",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "ClosePosition",
       "target": "ModifyPositionSL",
-      "type": "CALLS"
-    },
-    {
-      "source": "ClosePosition",
-      "target": "ModifyPositionSL",
-      "type": "CALLS"
-    },
-    {
-      "source": "CountPositions",
-      "target": "PositionsTotal",
       "type": "CALLS"
     },
     {
@@ -835,41 +640,6 @@
     },
     {
       "source": "CountPositions",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "CountPositions",
-      "target": "ModifyPositionSL",
-      "type": "CALLS"
-    },
-    {
-      "source": "CountPositions",
-      "target": "ModifyPositionSL",
-      "type": "CALLS"
-    },
-    {
-      "source": "PositionsTotal",
-      "target": "TrailPositions",
-      "type": "CALLS"
-    },
-    {
-      "source": "PositionsTotal",
-      "target": "ModifyPositionSL",
-      "type": "CALLS"
-    },
-    {
-      "source": "PositionsTotal",
-      "target": "ModifyPositionSL",
-      "type": "CALLS"
-    },
-    {
-      "source": "TrailPositions",
-      "target": "PositionsTotal",
-      "type": "CALLS"
-    },
-    {
-      "source": "TrailPositions",
       "target": "ModifyPositionSL",
       "type": "CALLS"
     },

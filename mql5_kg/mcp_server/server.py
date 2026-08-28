@@ -2,8 +2,7 @@
 MCP Server - Model Context Protocol server for AI assistant integration.
 Provides tools for querying the MQL5 knowledge graph.
 
-Targets MCP SDK >= 2.0 (which removed the decorator-based list_tools/call_tool
-API in favour of add_request_handler).
+Uses MCP SDK v1.x decorator-based API (@server.list_tools, @server.call_tool).
 """
 
 import json
