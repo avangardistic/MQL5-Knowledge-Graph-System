@@ -1,0 +1,88 @@
+{
+  "symbols": [
+    {
+      "context_units": 100,
+      "graph_summary": {
+        "diagnostics": 24,
+        "edges": 93,
+        "files": 2,
+        "graph_json_bytes": 63337,
+        "nodes": 51
+      },
+      "latency_seconds": {
+        "context_package": 0.002,
+        "index": 0.02
+      },
+      "measurements": {
+        "defining_files_only": {
+          "bytes": 6400,
+          "chars": 6400,
+          "estimated_tokens": 1600
+        },
+        "graph_context_package": {
+          "bytes": 71705,
+          "chars": 71705,
+          "estimated_tokens": 17926
+        },
+        "graph_plus_definition": {
+          "bytes": 72326,
+          "chars": 72326,
+          "estimated_tokens": 18081
+        },
+        "whole_repository": {
+          "bytes": 10545,
+          "chars": 10545,
+          "estimated_tokens": 2636
+        }
+      },
+      "methodology": {
+        "context_package_budget": 100,
+        "definition_window": "5 lines before .. 15 lines after definition",
+        "token_estimate": "chars / 4"
+      },
+      "symbol": "OnTick"
+    },
+    {
+      "context_units": 100,
+      "graph_summary": {
+        "diagnostics": 24,
+        "edges": 93,
+        "files": 2,
+        "graph_json_bytes": 63337,
+        "nodes": 51
+      },
+      "latency_seconds": {
+        "context_package": 0.002,
+        "index": 0.022
+      },
+      "measurements": {
+        "defining_files_only": {
+          "bytes": 6400,
+          "chars": 6400,
+          "estimated_tokens": 1600
+        },
+        "graph_context_package": {
+          "bytes": 71705,
+          "chars": 71705,
+          "estimated_tokens": 17926
+        },
+        "graph_plus_definition": {
+          "bytes": 72326,
+          "chars": 72326,
+          "estimated_tokens": 18081
+        },
+        "whole_repository": {
+          "bytes": 10545,
+          "chars": 10545,
+          "estimated_tokens": 2636
+        }
+      },
+      "methodology": {
+        "context_package_budget": 100,
+        "definition_window": "5 lines before .. 15 lines after definition",
+        "token_estimate": "chars / 4"
+      },
+      "symbol": "OnTick"
+    }
+  ]
+}

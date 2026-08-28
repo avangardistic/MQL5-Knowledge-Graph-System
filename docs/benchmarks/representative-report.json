@@ -1,0 +1,21 @@
+{
+  "framework": "synthetic_representative_40files",
+  "measured": {
+    "repo_bytes": 454690,
+    "repo_estimated_tokens": 113672,
+    "context_package_bytes": 43481,
+    "context_package_estimated_tokens": 10871,
+    "pkg_repo_ratio": 0.0956,
+    "context_units": 60,
+    "token_estimate": "chars / 4"
+  },
+  "graph_summary": {
+    "files": 40,
+    "nodes": 3801,
+    "edges": 7400,
+    "diagnostics": 40,
+    "graph_json_bytes": 4561306
+  },
+  "methodology": "benchmark_context(synthetic_40x90_repo, Synth0Func0, context_units=60, max_work=5000000); whole_repository vs bounded graph_context_package; conservative chars/4 estimate; recorded, not claimed.",
+  "note": "This is the representative multi-file case where a fixed-budget structural context package is dramatically smaller than the raw source. For a tiny 2-file repo (see token-efficiency-sample.json) a large package can exceed raw source; the benchmark reports both honestly."
+}
