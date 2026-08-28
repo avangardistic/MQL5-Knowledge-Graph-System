@@ -192,10 +192,11 @@ files parse near-linearly (regression-tested).
 
 - **Repository:** https://github.com/avangardistic/MQL5-Knowledge-Graph-System
 - **Branch:** `main`
-- **Final commit SHA:** recorded in git log after the commit series; the
-  repository was pushed to the remote.
-- Commit series: core rewrite → human docs → AI/planning docs → AGENTS/README
-  → CI → this final report, following `docs/rewrite/migration-plan.md`.
+- **Final commit SHA:** `1b565a0802f0408b60d15ead77b97efefd8e75a3`
+- Commit series: core rewrite (`99bd778`) → human docs (`863dc89`) →
+  AI/planning docs (`77d6693`) → AGENTS/README/notices (`e035e5e`) → CI
+  (`9871f32`) → FINAL_REPORT (`c622c5a`) → cleanup (`b1b9549`, `1b565a0`),
+  following `docs/rewrite/migration-plan.md`.
 
 ---
 
