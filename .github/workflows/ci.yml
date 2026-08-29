@@ -38,47 +38,50 @@ jobs:
           mql5kg status /tmp/graph.json --json
           mql5kg trace /tmp/graph.json OnTick OrderSend
 
-      # Guard against untracked-fixture regressions: every path under
-      # tests/fixtures referenced by the test suite must exist AND be tracked
-      # by git. This prevents the failure mode where a '.gitignore' rule or a
-      # missing `git add` silently drops a required fixture (for example a
-      # `*.log` rule swallowing tests/fixtures/compiler_logs/*.log), which only
-      # surfaces as FileNotFoundError on a fresh clone. It also asserts that no
-      # fixture that should be committed is currently ignored.
-      - name: Guard against untracked test fixtures
+      # Guard against silent content drift: every file under the guarded
+      # content trees (test fixtures, docs, sample sources) must exist on disk
+      # AND be tracked by git. This prevents the failure mode where a
+      # '.gitignore' rule or a missing `git add` silently drops a required file
+      # (for example the old '*.log' rule swallowing
+      # tests/fixtures/compiler_logs/*.log), which only surfaces as a missing
+      # file on a fresh clone. Add new content trees to GUARDED as needed.
+      - name: Guard against untracked content files
         run: |
           python - <<'PY'
           import pathlib, subprocess
 
-          # A fixture is only usable in CI if it is committed. If a rule in
-          # .gitignore swallows a fixture (e.g. the old *.log rule hiding
+          # A file is only usable in CI if it is committed. If a rule in
+          # .gitignore swallows it (e.g. the old *.log rule hiding
           # tests/fixtures/compiler_logs/*.log) it is present on disk locally
-          # but absent from `git ls-files`, surfacing as FileNotFoundError on a
-          # fresh clone. Guard the whole fixtures tree: every file under
-          # tests/fixtures must exist on disk AND be tracked by git.
+          # but absent from `git ls-files`, surfacing as a missing file on a
+          # fresh clone. Guard whole trees: every file under each guarded tree
+          # must exist on disk AND be tracked by git.
           root = pathlib.Path(".")
-          fixtures = root / "tests" / "fixtures"
-          if not fixtures.is_dir():
-              raise SystemExit("tests/fixtures is missing")
+          guarded = ["tests/fixtures", "docs", "sample_mql5"]
           tracked = subprocess.check_output(
               ["git", "ls-files"], text=True
           ).splitlines()
           tracked_set = set(tracked)
           problems = []
-          for f in sorted(fixtures.rglob("*")):
-              if not f.is_file():
-                  continue
-              norm = f.as_posix()
-              if norm not in tracked_set:
-                  problems.append(f"UNTRACKED  {norm}  (add to git or fix .gitignore)")
+          total = 0
+          for tree in guarded:
+              tree_path = root / tree
+              if not tree_path.is_dir():
+                  raise SystemExit(f"guarded tree {tree} is missing")
+              for f in sorted(tree_path.rglob("*")):
+                  if not f.is_file():
+                      continue
+                  total += 1
+                  norm = f.as_posix()
+                  if norm not in tracked_set:
+                      problems.append(f"UNTRACKED  {norm}  (add to git or fix .gitignore)")
 
           if problems:
-              print("::error::Committing these required test fixtures:")
+              print("::error::Committing these required content files:")
               for msg in problems:
                   print(f"::error::  {msg}")
               raise SystemExit(1)
-          count = sum(1 for _ in fixtures.rglob("*"))
-          print(f"verified {count} fixture files are tracked and not ignored")
+          print(f"verified {total} files in {', '.join(guarded)} are tracked and not ignored")
           PY
 
       # Guard: reject committed private keys and placeholder secrets. The scan
