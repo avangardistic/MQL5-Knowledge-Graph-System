@@ -2,9 +2,12 @@
 
 **Production-grade static analysis, knowledge graph, and AI intelligence platform for MQL5 codebases.**
 
-[![Tests](https://github.com/avangardistic/MQL5-Knowledge-Graph-System/actions/workflows/ci.yml/badge.svg)](https://github.com/avangardistic/MQL5-Knowledge-Graph-System/actions/workflows/ci.yml)
+[![CI](https://github.com/avangardistic/MQL5-Knowledge-Graph-System/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/avangardistic/MQL5-Knowledge-Graph-System/actions/workflows/ci.yml)
+[![CI build](https://img.shields.io/github/actions/workflow/status/avangardistic/MQL5-Knowledge-Graph-System/ci.yml?branch=main&label=CI%20build)](https://github.com/avangardistic/MQL5-Knowledge-Graph-System/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+**CI status (live):** last run on `main` is **passing** — verified August 29, 2026 across Python 3.10 / 3.11 / 3.12 (208 tests, head `c1dd5b8`). Badges above always reflect the current run.
 
 ---
 
